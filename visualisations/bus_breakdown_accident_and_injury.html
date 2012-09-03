@@ -65,7 +65,7 @@
         
         d3.select("svg") 
           .append("g") 
-            .attr("class", "x axis") 
+            .attr("class", "x axis") // not x.axis
             .attr("transform", "translate(0," + (height-margin) + ")") 
           .call(x_axis);
         
@@ -75,7 +75,7 @@
             .attr("transform", "translate(" + margin + ", 0 )") 
           .call(y_axis);
          
-        d3.select('.y.axis')
+        d3.select('.y') // not y nor y axis
             .append('text')
             .text('mean distance between failure (miles)')
             .attr('transform', "rotate (-90, -43, 0) translate(-280)")
@@ -85,8 +85,13 @@
             .text('collisions with injury (per million miles)')
             .attr('x', function(){return (width / 2) - margin})
             .attr('y', margin/1.5)
+
+<!-- d3.select('x axis').append('text').text('collisions w/ injury') -->
+<!-- .attr('x', (width/2)) -->
+<!-- .attr('y', margin+10); -->
         
     }
+
     </script>
 </head>
 <body>

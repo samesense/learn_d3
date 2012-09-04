@@ -31,15 +31,15 @@
     </style>
     <script>
     function mk_arcs(data) {
-    var pie = d3.layout.pie().value(function(d){return 10;});
+    var pie = d3.layout.pie().value(function(d){return 20;});
     var arcs = pie(data),
         i = -1,
         arc;
     while (++i < data.length) {
         arc = arcs[i];
-        arc.innerRadius = 25;
+        arc.innerRadius = 100;
         console.log(data[i]);
-        arc.outerRadius = 50+2*data[i].count;
+        arc.outerRadius = 100+10*data[i].count;
     }
     return arcs;
     }
@@ -55,16 +55,16 @@
     console.log(count)
     var arc = d3.svg.arc()
                     .innerRadius(100-50)
-                    .outerRadius(100 + count);// + filtered_data.count);
+                    .outerRadius(100 + 10*count);// + filtered_data.count);
     return arc;}
 
     function draw(data) {
         "use strict";
         var margin = 50,
-            width = 200,
-            height = 200,
-            r1 = 100,
-            r0 = 100,
+            width = 800,
+            height = 800,
+            r1 = 400,
+            r0 = 200,
             color = d3.scale.category20c(),
             donut = d3.layout.pie();
 
@@ -97,6 +97,7 @@
        // I can't assign IDs as above, I need another way
        arcs.append('svg:path')
            .attr('fill',function(d,i){return color(i);})
+//           .attr('fill','SteelBlue')
            .attr('d',arc);
 //               .attr('d',perry_arc_two(data));
 //    .attr('d',function(d,i){arc});

@@ -28,6 +28,9 @@ var w = 800,
     arc = d3.svg.arc(),
     donut = d3.layout.pie();
 
+   console.log(data0)
+   console.log(data1)
+
 var vis = d3.select("body")
   .append("svg:svg")
     .attr("width", w)
@@ -51,7 +54,7 @@ function arcs(data0, data1) {
   while (++i < n) {
     arc = arcs0[i];
     arc.innerRadius = r0;
-    arc.outerRadius = r1;
+    arc.outerRadius = r1 + r1*i/500;
     arc.next = arcs1[i];
   }
   return arcs0;

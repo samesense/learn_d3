@@ -30,6 +30,28 @@
         
     </style>
     <script>
+    function color_by_year(d,i) {
+    console.log(d)
+    if(d[i].year == '2007') {
+    return 'Blue';
+    }
+    else if (d[i].year == '2008') {
+    return 'Red';
+    }
+    else if (d[i].year == '2009') {
+    return 'Green';
+    }
+    else if (d[i].year == '2010') {
+    return 'Orange';
+    }
+    else if (d[i].year == '2011') {
+    return 'Pink';
+    }
+    else {
+    return 'Purple';
+    }
+    }
+
     function mk_arcs(data) {
     var pie = d3.layout.pie().value(function(d){return 20;});
     var arcs = pie(data),
@@ -38,7 +60,7 @@
     while (++i < data.length) {
         arc = arcs[i];
         arc.innerRadius = 100;
-        console.log(data[i]);
+  //      console.log(data[i]);
         arc.outerRadius = 100+10*data[i].count;
     }
     return arcs;
@@ -49,7 +71,7 @@
 <!--                     .outerRadius(100) } -->
 
     function perry_arc(count){
-//    console.log(data)
+////    console.log(data)
 //    filtered_data = data.filter(function(d){return d.week == an_arc.id})
   //  console.log(filtered_data)
     console.log(count)
@@ -97,7 +119,7 @@
        // I can't assign IDs as above, I need another way
        arcs.append('svg:path')
            .attr('fill',function(d,i){return color(i);})
-//           .attr('fill','SteelBlue')
+//           .attr('fill',function(d,i){color_by_year(d,i)})
            .attr('d',arc);
 //               .attr('d',perry_arc_two(data));
 //    .attr('d',function(d,i){arc});

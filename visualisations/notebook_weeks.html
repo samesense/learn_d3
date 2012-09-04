@@ -30,6 +30,34 @@
         
     </style>
     <script>
+    function mk_arcs(data) {
+    var pie = d3.layout.pie().value(function(d){return 10;});
+    var arcs = pie(data),
+        i = -1,
+        arc;
+    while (++i < data.length) {
+        arc = arcs[i];
+        arc.innerRadius = 25;
+        console.log(data[i]);
+        arc.outerRadius = 50+2*data[i].count;
+    }
+    return arcs;
+    }
+
+<!--     function perry_arc_two(data){ return d3.svg.arc() -->
+<!--                     .innerRadius(100-50) -->
+<!--                     .outerRadius(100) } -->
+
+    function perry_arc(count){
+//    console.log(data)
+//    filtered_data = data.filter(function(d){return d.week == an_arc.id})
+  //  console.log(filtered_data)
+    console.log(count)
+    var arc = d3.svg.arc()
+                    .innerRadius(100-50)
+                    .outerRadius(100 + count);// + filtered_data.count);
+    return arc;}
+
     function draw(data) {
         "use strict";
         var margin = 50,
@@ -48,19 +76,33 @@
           .append('svg:g')
           .attr("transform", "translate(" + r1 + "," + r1 + ")");
 
-        var arc = d3.svg.arc().outerRadius(r1);
+        var arc = d3.svg.arc();
+//                    .innerRadius(r1-50)
+  //                  .outerRadius(r1);
 
-        var pie = d3.layout.pie().value(function(d){return d.count;});
+//        var pie = d3.layout.pie().value(function(d){return d.count;});
 
         var arcs = vis.selectAll("g.slice")
-                   .data(pie)
+                   .data(mk_arcs(data))
                    .enter()
-                   .append("svg:g").attr('class','slice');
+                   .append("svg:g");
+//                   .attr('class','slice arc_' + function(d){return d.week;});
+//                   .attr('id', function(d){return d.week;});
 
+<!--        d3.select('#slice') -->
+<!--          .data([data]) -->
+<!--          .enter() -->
+<!--          .attr('id', function(d){return d.week;}); -->
+
+       // I can't assign IDs as above, I need another way
        arcs.append('svg:path')
            .attr('fill',function(d,i){return color(i);})
            .attr('d',arc);
+//               .attr('d',perry_arc_two(data));
+//    .attr('d',function(d,i){arc});
+//           .attr('d', function(d,i){ perry_arc(data[i].count); })
     } 
+
     </script>
 </head>
 <body>

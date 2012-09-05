@@ -8,43 +8,25 @@
             font-family:sans-serif;
             font-size:0.7em;
         }
-        div.bar {
-            background-color:DarkRed;
-            color:white;
-            height:3em;
-            line-height:3em;
-            padding-right:1em;
-            margin-bottom:2px;
-            text-align:right;
-            margin-left:22em;
-        }
-        div.label {
-            height:3em;
-            line-height:3em;
-            padding-right:1em;
-            margin-bottom:2px;
-            float:left;
-            width:20em;
-            text-align:right;
-        }
-        
     </style>
+
     <script>
+
     function color_by_year(d,i) {
-    console.log(d)
-    if(d[i].year == '2007') {
+//    console.log(d)
+    if(d.id == 2007) {
     return 'Blue';
     }
-    else if (d[i].year == '2008') {
+    else if (d.id == 2008) {
     return 'Red';
     }
-    else if (d[i].year == '2009') {
+    else if (d.id == 2009) {
     return 'Green';
     }
-    else if (d[i].year == '2010') {
+    else if (d.id == 2010) {
     return 'Orange';
     }
-    else if (d[i].year == '2011') {
+    else if (d.id == 2011) {
     return 'Pink';
     }
     else {
@@ -53,32 +35,18 @@
     }
 
     function mk_arcs(data) {
-    var pie = d3.layout.pie().value(function(d){return 20;});
-    var arcs = pie(data),
-        i = -1,
-        arc;
-    while (++i < data.length) {
-        arc = arcs[i];
-        arc.innerRadius = 100;
-  //      console.log(data[i]);
-        arc.outerRadius = 100+10*data[i].count;
+        var pie = d3.layout.pie().value(function(d){return 1;});
+        var arcs = pie(data),
+                   i = -1,
+                   arc;
+        while (++i < data.length) {
+            arc = arcs[i];
+	    arc.innerRadius = 100;
+	    arc.outerRadius = 100+10*data[i].count;
+	    arc.id = data[i].year;
+	}
+        return arcs;
     }
-    return arcs;
-    }
-
-<!--     function perry_arc_two(data){ return d3.svg.arc() -->
-<!--                     .innerRadius(100-50) -->
-<!--                     .outerRadius(100) } -->
-
-    function perry_arc(count){
-////    console.log(data)
-//    filtered_data = data.filter(function(d){return d.week == an_arc.id})
-  //  console.log(filtered_data)
-    console.log(count)
-    var arc = d3.svg.arc()
-                    .innerRadius(100-50)
-                    .outerRadius(100 + 10*count);// + filtered_data.count);
-    return arc;}
 
     function draw(data) {
         "use strict";
@@ -87,43 +55,34 @@
             height = 800,
             r1 = 400,
             r0 = 200,
-            color = d3.scale.category20c(),
-            donut = d3.layout.pie();
-
+            color = d3.scale.category20c();
+	console.log(color(25));
         var vis = d3.select("body")
-          .append("svg:svg")
-          .attr('width', width+margin)
-          .attr('height', height+margin)
-          .data([data])
-          .append('svg:g')
-          .attr("transform", "translate(" + r1 + "," + r1 + ")");
+                    .append("svg:svg")
+                    .attr('width', width+margin)
+		    .attr('height', height+margin)
+		    .data([data])
+		    .append('svg:g')
+		    .attr("transform", "translate(" + r1 + "," + r1 + ")");
 
         var arc = d3.svg.arc();
-//                    .innerRadius(r1-50)
-  //                  .outerRadius(r1);
-
-//        var pie = d3.layout.pie().value(function(d){return d.count;});
 
         var arcs = vis.selectAll("g.slice")
-                   .data(mk_arcs(data))
-                   .enter()
-                   .append("svg:g");
+                      .data(mk_arcs(data))
+                      .enter()
+                      .append("svg:g")
+		      .attr('id', function(d){return d.id});
+
 //                   .attr('class','slice arc_' + function(d){return d.week;});
 //                   .attr('id', function(d){return d.week;});
 
-<!--        d3.select('#slice') -->
-<!--          .data([data]) -->
-<!--          .enter() -->
-<!--          .attr('id', function(d){return d.week;}); -->
 
        // I can't assign IDs as above, I need another way
        arcs.append('svg:path')
-           .attr('fill',function(d,i){return color(i);})
-//           .attr('fill',function(d,i){color_by_year(d,i)})
+//           .attr('fill',function(d,i){return color(d.month);})
+//           .attr('fill',function(d,i){return color(i);})
+           .attr('fill',function(d,i){return color_by_year(d,i)})
            .attr('d',arc);
-//               .attr('d',perry_arc_two(data));
-//    .attr('d',function(d,i){arc});
-//           .attr('d', function(d,i){ perry_arc(data[i].count); })
     } 
 
     </script>

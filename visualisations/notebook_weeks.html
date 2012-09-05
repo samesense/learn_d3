@@ -4,6 +4,37 @@
     <meta charset="utf-8">
     <script type="text/javascript" src="d3.js"></script>
     <style>
+
+ .axis path, line{
+        stroke:black;
+
+  .line {
+        float:left;
+    }
+    .line_container{
+        width: 150px;
+        height: 20px;
+    }
+
+        #ring{ float:left; }
+
+ .key{
+        float:right;
+    }
+    .key_line{
+        font-size:17px;
+        width:100%;
+    }
+    .key_square{
+        height:10px;
+        width:10px;
+        outline:solid 1px black;
+        float:left;
+        margin-right:10px;
+        margin-top:6px;
+        margin-left:10px;
+    }
+
         div.chart{
             font-family:sans-serif;
             font-size:0.7em;
@@ -13,7 +44,6 @@
     <script>
 
     function color_by_year(d,i) {
-//    console.log(d)
     if(d.id == 2007) {
     return 'Blue';
     }
@@ -44,6 +74,7 @@
 	    arc.innerRadius = 100;
 	    arc.outerRadius = 100+10*data[i].count;
 	    arc.id = data[i].year;
+	    arc.month = data[i].month;
 	}
         return arcs;
     }
@@ -57,7 +88,7 @@
             r0 = 200,
             color = d3.scale.category20c();
 	console.log(color(25));
-        var vis = d3.select("body")
+        var vis = d3.select("#ring")
                     .append("svg:svg")
                     .attr('width', width+margin)
 		    .attr('height', height+margin)
@@ -79,15 +110,35 @@
 
        // I can't assign IDs as above, I need another way
        arcs.append('svg:path')
-//           .attr('fill',function(d,i){return color(d.month);})
-//           .attr('fill',function(d,i){return color(i);})
-           .attr('fill',function(d,i){return color_by_year(d,i)})
+           .attr('fill',function(d,i){return color(d.month);}) // color by month
+//           .attr('fill',function(d,i){return color(i);}) // random color
+//           .attr('fill',function(d,i){return color_by_year(d,i)}) // color for each year
            .attr('d',arc);
+
+      // draw the key
+      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12]
+      var key_items = d3.select('#key')
+                        .selectAll('div')
+                        .data(month_data)
+		        .enter()
+		        .append('div')
+		        .attr('class', 'key_line')
+		        .attr('id', function(d,i){ return d[i] })
+
+ key_items.append('div')
+            .attr('id', function(d,i){return 'key_square_' + d[i]})
+            .attr('class', function(d,i){return 'key_square ' + d[i]})
+        
+        key_items.append('div')
+            .attr('class','key_label')
+            .text(function(d,i){return d[i]})
     } 
 
     </script>
 </head>
 <body>
+    <div id="ring"></div>
+    <div id="key"></div>
     <script>
         d3.json('data/ring_week.json', draw);
     </script>

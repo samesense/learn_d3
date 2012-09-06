@@ -5,27 +5,29 @@
     <script type="text/javascript" src="d3.js"></script>
     <style>
 
- .axis path, line{
-        stroke:black;
+    .axis path, line{
+        stroke:black; }
 
   .line {
         float:left;
     }
+
     .line_container{
         width: 150px;
         height: 20px;
     }
 
-        #ring{ float:left; }
+    #ring{ float:right; }
 
- .key{
-        float:right;
-    }
+    .key{ float:left; }
+
     .key_line{
         font-size:17px;
         width:100%;
     }
     .key_square{
+//background-color:#FCCC0A;
+background-color:Yellow;
         height:10px;
         width:10px;
         outline:solid 1px black;
@@ -87,7 +89,7 @@
             r1 = 400,
             r0 = 200,
             color = d3.scale.category20c();
-	console.log(color(25));
+//	console.log(color(25));
         var vis = d3.select("#ring")
                     .append("svg:svg")
                     .attr('width', width+margin)
@@ -116,29 +118,53 @@
            .attr('d',arc);
 
       // draw the key
-      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12]
+      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12];
       var key_items = d3.select('#key')
                         .selectAll('div')
                         .data(month_data)
 		        .enter()
 		        .append('div')
 		        .attr('class', 'key_line')
-		        .attr('id', function(d,i){ return d[i] })
+		        .attr('id', function(d){ return 'month' + d; });
 
- key_items.append('div')
-            .attr('id', function(d,i){return 'key_square_' + d[i]})
+
+<!-- background-color:Yellow; -->
+<!--         height:10px; -->
+<!--         width:10px; -->
+<!--         outline:solid 1px black; -->
+<!--         float:left; -->
+<!--         margin-right:10px; -->
+<!--         margin-top:6px; -->
+<!--         margin-left:10px; -->
+
+
+key_items.append('div')
+<!-- .('background-color','Yellow') -->
+<!-- .attr('height','10px') -->
+<!-- .attr('width','10px') -->
+<!-- .attr('float','left') -->
+<!-- .attr('margin-left','10px') -->
+<!-- .attr('outline','solid 1px black') -->
+<!-- .attr('margin-right','10px') -->
+<!-- .attr('margin-top','10px') -->
+
+            //.attr('id', function(d,i){return 'key_square_' + d[i]})
+.style('background-color', function(d){return color(d);})
             .attr('class', function(d,i){return 'key_square ' + d[i]})
+
+//.attr('stroke', function(d){return color(d);})
+//.attr('fill', function(d){return color(d);});
         
         key_items.append('div')
             .attr('class','key_label')
-            .text(function(d,i){return d[i]})
+            .text(function(d){ return 'month' + d; })
     } 
 
     </script>
 </head>
 <body>
-    <div id="ring"></div>
     <div id="key"></div>
+    <div id="ring"></div>
     <script>
         d3.json('data/ring_week.json', draw);
     </script>

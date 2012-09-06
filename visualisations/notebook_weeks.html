@@ -118,14 +118,16 @@ background-color:Yellow;
            .attr('d',arc);
 
       // draw the key
-      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12];
+//      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12];
+var month_data = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+              'September', 'October', 'November', 'December']
       var key_items = d3.select('#key')
                         .selectAll('div')
                         .data(month_data)
 		        .enter()
 		        .append('div')
 		        .attr('class', 'key_line')
-		        .attr('id', function(d){ return 'month' + d; });
+		        .attr('id', function(d){ return d; });
 
 
 <!-- background-color:Yellow; -->
@@ -149,15 +151,15 @@ key_items.append('div')
 <!-- .attr('margin-top','10px') -->
 
             //.attr('id', function(d,i){return 'key_square_' + d[i]})
-.style('background-color', function(d){return color(d);})
-            .attr('class', function(d,i){return 'key_square ' + d[i]})
+.style('background-color', function(d,i){return color(i+1);})
+            .attr('class', 'key_square')
 
 //.attr('stroke', function(d){return color(d);})
 //.attr('fill', function(d){return color(d);});
         
         key_items.append('div')
             .attr('class','key_label')
-            .text(function(d){ return 'month' + d; })
+            .text(function(d){ return d; })
     } 
 
     </script>

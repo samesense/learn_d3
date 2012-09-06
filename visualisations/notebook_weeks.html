@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="d3.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
     <style>
 
     .axis path, line{
@@ -61,6 +61,24 @@
     }
     }
 
+function mk_year_arcs(data) {
+        var pie = d3.layout.pie().value(function(d){return d.weeks;});
+//        pie.startAngle(2.3)
+//        pie.endAngle(-2)
+        var arcs = pie(data),
+                   i = -1,
+                   arc;
+        while (++i < data.length) {
+
+            arc = arcs[i];
+		     console.log(data[i].year, arc.value);
+	    arc.innerRadius = 85;
+	    arc.outerRadius = 95;
+	    arc.id = data[i].year;
+	}
+        return arcs;
+    }
+
     function mk_arcs(data) {
         var pie = d3.layout.pie().value(function(d){return 1;});
         var arcs = pie(data),
@@ -85,12 +103,12 @@
             rx = 350,
             r0 = 200,
             color = d3.scale.category20c();
-
+//		     console.log(data.week_counts);
         var vis = d3.select("#ring")
                     .append("svg:svg")
                     .attr('width', width+margin)
 		    .attr('height', height+margin)
-		    .data([data])
+		    .data(data.week_counts)
 		    .append('svg:g')
 		    .attr("transform", "translate(" + rx + "," + r1 + ")");
 
@@ -115,11 +133,21 @@ thing.append("use")
     .style("fill", "none");
 
 
-
         var arc = d3.svg.arc();
 
+	var year_arcs = vis.selectAll('g.slice')
+                           .data(mk_year_arcs(data.year_week_counts))
+			   .enter()
+                           .append('svg:g')
+                           .attr('id', function(d){ return d.id; });
+//console.log(year_arcs);
+        year_arcs.append('svg:path')
+                 .attr('fill',function(d,i){return color(d.id);})
+                 .attr('d',arc)
+		    .attr("transform", "rotate(41)");
+
         var arcs = vis.selectAll("g.slice")
-                      .data(mk_arcs(data))
+                      .data(mk_arcs(data.week_counts))
                       .enter()
                       .append("svg:g")
 		      .attr('id', function(d){return d.id});

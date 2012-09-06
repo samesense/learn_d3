@@ -67,10 +67,10 @@
             .scale(expression_scale)
             .orient("left")
         
-        <!-- var line = d3.svg.line() -->
-        <!--     .x(function(d){return time_scale(d.time)}) -->
-        <!--     .y(function(d){return count_scale(d.count)}) -->
-        <!--     .interpolate("linear") -->
+        var line = d3.svg.line()
+            .x(function(d){return freq_scale(d.x)})
+            .y(function(d){return expression_scale(d.y)})
+            .interpolate("linear")
                     
         d3.select("body") 
           .append("svg")
@@ -78,10 +78,10 @@
             .attr("width", width+margin)
             .attr("height", height+margin)
         
-        <!-- d3.select('svg') -->
-        <!--   .append('path') -->
-        <!--     .attr('d', line(data.times_square)) -->
-        <!--     .attr('class', 'times_square') -->
+        d3.select('svg')
+          .append('path')
+            .attr('d', line(data.path))
+            .attr('class', 'times_square')
         
         <!-- d3.select('svg') -->
         <!--   .append('path') -->
@@ -91,7 +91,7 @@
         
         d3.select("svg")
           .selectAll("circle")
-          .data(data)
+          .data(data.points)
           .enter()
           .append("circle")
           .attr("class", function(d){return d.gene_set;})

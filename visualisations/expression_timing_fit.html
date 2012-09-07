@@ -28,7 +28,7 @@
         fill:MediumSeaGreen;
     }
     path.times_square{
-        stroke:DeepPink;
+        stroke:Black;
     }
     path.grand_central{
         stroke:MediumSeaGreen;
@@ -49,27 +49,30 @@
         var freq_extent = d3.extent(data,
             function(d){return d.mut_freq}
         )
+
+        var freq_scale = d3.scale.linear()
+                           .domain([0,.015])
+                           .range([height, margin])
         
         var expression_scale = d3.scale.linear()
-.domain([0,50])
-//            .domain(expression_extent)
-            .range([height, margin]);
+                                 .domain([0,50])
+                                 .range([margin, width]);
         
-        var freq_scale = d3.scale.linear()
-.domain([0,.015])
-//            .domain(freq_extent)
-            .range([margin, width])
+<!--         var freq_scale = d3.scale.linear() -->
+<!-- .domain([0,.015]) -->
+<!-- //            .domain(freq_extent) -->
+<!--             .range([margin, width]) -->
         
         var freq_axis = d3.svg.axis()
-            .scale(freq_scale)
-        
+                          .scale(freq_scale)
+                          .orient('left')
+
         var expression_axis = d3.svg.axis()
             .scale(expression_scale)
-            .orient("left")
         
         var line = d3.svg.line()
-            .x(function(d){return freq_scale(d.x)})
-            .y(function(d){return expression_scale(d.y)})
+            .x(function(d){return expression_scale(d.x)})
+            .y(function(d){return freq_scale(d.y)})
             .interpolate("linear")
                     
         d3.select("body") 
@@ -83,12 +86,6 @@
             .attr('d', line(data.path))
             .attr('class', 'times_square')
         
-        <!-- d3.select('svg') -->
-        <!--   .append('path') -->
-        <!--     .attr('d', line(data.grand_central)) -->
-        <!--     .attr('class', 'grand_central') -->
-        
-        
         d3.select("svg")
           .selectAll("circle")
           .data(data.points)
@@ -100,8 +97,8 @@
 	  <!-- .attr('expression', function(d){return d.expression;}) -->
 
           d3.selectAll("circle")
-            .attr("cy", function(d){return expression_scale(d.expression);})
-            .attr("cx", function(d){return freq_scale(d.mut_freq);})
+            .attr("cy", function(d){return freq_scale(d.mut_freq);})
+            .attr("cx", function(d){return expression_scale(d.expression);})
             .attr("r", 3)
             .on('mouseover.tooltip', function(d){
 console.log(d.gene);
@@ -113,8 +110,8 @@ console.log(d.expression);
                 d3.select('svg')
                     .append('text')
                     .text(d.gene)
-                    .attr('x', freq_scale(d.mut_freq))
-                    .attr('y', expression_scale(d.expression))
+                    .attr('x', expression_scale(d.expression))
+                    .attr('y', freq_scale(d.mut_freq))
                     .attr('class', d.gene)
 //.style('stroke','#996633')
 .style('font-size','12px')
@@ -134,24 +131,24 @@ console.log(d.expression);
           .append("g")
           .attr("class", "x axis")
           .attr("transform", "translate(0," + height + ")")
-          .call(freq_axis);
+          .call(expression_axis);
          
         d3.select("svg")
           .append("g")
           .attr("class", "y axis")
           .attr("transform", "translate(" + margin + ",0)")
-          .call(expression_axis);
+          .call(freq_axis);
     
       d3.select('.y.axis')
           .append('text')
-          .text('RNA-Seq Expression')
+          .text('Mutation Frequency')
           .attr('transform', "rotate (90, " + -margin + ", 0)")
           .attr('x', 200)
           .attr('y', 0)
                     
       d3.select('.x.axis')
         .append('text')
-          .text('Mutation Frequency')
+          .text('RNA-Seq Expression')
           .attr('x', function(){return (width / 2) - margin})
           .attr('y', margin/1.25)    
     }

@@ -70,18 +70,41 @@
 <!-- startAngle: 5.608892249823728 -->
 <!-- value: 11 -->
 
-function mk_year_arcs_2(week_arcs) {
-var year_angles = {2007:[100,-100], 2008:[100,-100], 2009:[100,-100], 2010:[100,-100], 2011:[100,-100], 2012:[100,-100],}
-    i = -1;
+function mk_year_arcs_2(week_arcs, year_data) {
+
+// start w/ the bad layout
+    var pie = d3.layout.pie().value(function(d){return d.weeks;});
+
+var year_angles = {2007:[100,-100], 
+                   2008:[100,-100], 
+                   2009:[100,-100], 
+                   2010:[100,-100], 
+                   2011:[100,-100], 
+                   2012:[100,-100]},
+    i = -1,
+    arcs = pie(year_data),
+    arc;    
 
 while (++i < week_arcs.length) {
-//console.log(week_arcs[i].startAngle, week_arcs[i].endAngle, week_arcs[i].id);
+//if(week_arcs[i].id == 2007){console.log(week_arcs[i].startAngle, week_arcs[i].endAngle);}
 year_angles[week_arcs[i].id][0] = d3.min([year_angles[week_arcs[i].id][0], 
 	                                  week_arcs[i].startAngle]);
 year_angles[week_arcs[i].id][1] = d3.max([year_angles[week_arcs[i].id][1], 
 	                                  week_arcs[i].endAngle]);
 }
+console.log(year_angles);
+i = -1;
+        while (++i < year_data.length) {
 
+            arc = arcs[i];
+	    arc.innerRadius = 85;
+	    arc.outerRadius = 95;
+	    arc.id = year_data[i].year;
+            arc.startAngle = year_angles[ year_data[i].year ][0];
+            arc.endAngle = year_angles[ year_data[i].year ][1];
+            //console.log(arc);
+	}
+        return arcs;
 }
 
 function mk_year_arcs(data) {
@@ -107,11 +130,48 @@ function mk_year_arcs(data) {
         var arcs = pie(data),
                    i = -1,
                    arc;
+
+        // there's a mixup in here between 2007 and 2012
+	// first I have to fix that
+        var correct_07_startAngle,
+	    correct_07_endAngle,
+	    correct_10_startAngle,
+	    correct_10_endAngle;
+
         while (++i < data.length) {
+
+	if (data[i].year == 2007) {
+	    if (arcs[i].startAngle > 3){ console.log(data[i].year, arcs[i].startAngle); 
+	    correct_10_startAngle = arcs[i].startAngle;
+	    correct_10_endAngle = arcs[i].endAngle;
+}
+	    }
+        else if (data[i].year == 2010) {
+	    if (arcs[i].startAngle < 1){ console.log(data[i].year, arcs[i].startAngle); 
+	    correct_07_startAngle = arcs[i].startAngle;
+	    correct_07_endAngle = arcs[i].endAngle;
+}
+	    }
+}
+
+i = -1;
+        while (++i < data.length) {
+
+	if (data[i].year == 2007) {
+	    if (arcs[i].startAngle > 3){ console.log('fixing 2007', correct_07_startAngle, correct_07_endAngle); arcs[i].startAngle = correct_07_startAngle; 
+	    arcs[i].endAngle = correct_07_endAngle; 
+}
+	    }
+        else if (data[i].year == 2010) {
+	    if (arcs[i].startAngle < 1){ console.log('fixing', correct_10_startAngle, correct_10_endAngle); arcs[i].startAngle = correct_10_startAngle; 
+	    arcs[i].endAngle = correct_10_endAngle; }
+	    }
+
             arc = arcs[i];
 	    arc.innerRadius = 100;
 	    arc.outerRadius = 100+10*data[i].count;
 	    arc.id = data[i].year;
+
 	    arc.month = data[i].month;
 	}
         return arcs;
@@ -158,21 +218,22 @@ thing.append("use")
 
         var arc = d3.svg.arc();
         var arcs_data = mk_arcs(data.week_counts);
-	var year_arcs_right = mk_year_arcs_2(arcs_data);
+		     console.log(arcs_data);
+//	var year_arcs_right = mk_year_arcs_2(arcs_data, data.year_week_counts);
 
 	var year_arcs = vis.selectAll('g.slice')
-                           .data(mk_year_arcs(data.year_week_counts))
+                           .data(mk_year_arcs_2(arcs_data, data.year_week_counts))
 			   .enter()
                            .append('svg:g')
                            .attr('id', function(d){ return d.id; });
 //console.log(year_arcs);
         year_arcs.append('svg:path')
                  .attr('fill',function(d,i){return color(d.id);})
-                 .attr('d',arc)
-		    .attr("transform", "rotate(41)");
+                 .attr('d',arc);
+//		    .attr("transform", "rotate(41)");
 
         var arcs = vis.selectAll("g.slice")
-                      .data(mk_arcs(data.week_counts))
+                      .data(arcs_data)
                       .enter()
                       .append("svg:g")
 		      .attr('id', function(d){return d.id});

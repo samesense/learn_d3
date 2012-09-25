@@ -251,8 +251,8 @@ thing.append("use")
 
       // draw the key
 //      var month_data = [1,2,3,4,5,6,7,8,9,10,11,12];
-var month_data = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-              'September', 'October', 'November', 'December']
+        var month_data = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+                          'September', 'October', 'November', 'December']
       var key_items = d3.select('#key')
                         .selectAll('div')
                         .data(month_data)
@@ -262,13 +262,13 @@ var month_data = ['January', 'February', 'March', 'April', 'May', 'June', 'July'
 		        .attr('id', function(d){ return d; });
 
 
-key_items.append('div')
-.style('background-color', function(d,i){return color(i+1);})
-            .attr('class', 'key_square')
+      key_items.append('div')
+               .style('background-color', function(d,i){return color(i+1);})
+               .attr('class', 'key_square')
 
-        key_items.append('div')
-            .attr('class','key_label')
-            .text(function(d){ return d; })
+      key_items.append('div')
+               .attr('class','key_label')
+               .text(function(d){ return d; })
     } 
 
     </script>

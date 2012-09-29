@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+<!--      <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script> -->
+<script type="text/javascript" src="d3.js">
+        <link type="text/css" rel="stylesheet" href="style.css">
+	    <link type="text/css" rel="stylesheet" href="prettify.css">
+	    <script type="text/javascript" src="prettify.js"></script>
+	    <link type="text/css" rel="stylesheet" href="style.css">
+	    <title></title>
+    </head>
+    <body>
+      <div id='body'>
+	<div id ='bars' style='width:2000px'></div>
+	<div id ='list'></div>
+	
+      <script type="text/javascript">
+<!-- 	d3.json('data5.json', -->
+<!-- 	function(data){ -->
+
+<!-- labels=d3.select('#list') -->
+<!-- .append('ul') -->
+<!-- .selectAll('li') -->
+<!-- .data(data) -->
+<!-- .enter() -->
+<!-- .append('li') -->
+<!-- .text(function(d){ -->
+<!-- var msg = d.Context; -->
+<!-- return msg}) -->
+
+<!-- labels2=labels.append('ul') -->
+<!-- .selectAll('li') -->
+<!-- .data(function(d){return d.tissues;}) -->
+<!-- .enter() -->
+<!-- .append('li') -->
+<!-- .text(function(d){ -->
+<!-- var msg=d.tissue; -->
+<!-- return msg}) -->
+
+<!-- labels2.append('ul') -->
+<!-- .selectAll('li') -->
+<!-- .data(function(d){return d.muts;}) -->
+<!-- .enter() -->
+<!-- .append('li') -->
+<!-- .text(function(d){ -->
+<!-- var msg=d.MutType + ' ' + d.Count; -->
+<!-- return msg}) -->
+
+<!-- ;}) -->
+
+d3.json('data/spitz_uv.json',
+function(data){
+
+var sx = d3.scale.linear().domain([0,100]).range([0,200]);
+var sy = d3.scale.linear().domain([0,5]).range([125,0]);
+var xAxis = d3.svg.axis().scale(sy).ticks(5).tickFormat('');<!-- tickValues([0,5]); -->
+
+var yAxis = d3.svg.axis().scale(sx).tickValues([0,25,50,75,100]);
+var yAxis2 = d3.svg.axis().scale(sx).tickValues([0,25,50,75,100]).tickFormat('');
+
+svg1=d3.select('#bars')
+.selectAll('svg')
+.data(data)
+.enter()
+.append('svg').append('g')
+
+<!-- <\!-- tissue label -\-> -->
+svg1.selectAll('svg')
+.data(function(d){return d.tissueNames})
+.enter().append('text')
+.attr('x', function(d,i){if(i==0){val=150+i*230} else if(i==1){val=125+i*230} else{val=150+i*230}; return val})
+.attr('y', 20)
+.attr('height',20)
+.style("font-size","0.7em")
+.text(function(d){return d.t});
+
+svg = svg1.selectAll('svg')
+.data(function(d){return d.data})
+.enter().append('svg').attr('height',500).attr('width',2000)
+.append('g')
+.attr('transform', function(d,i){return 'translate(0,' + 175*i + ')'})
+
+<!-- context label -->
+svg.append('text')
+.attr('transform','translate(750,40)rotate(45)')
+.style("font-size","0.9em")	
+<!-- .attr('transform','translate(700,70)') -->
+.text(function(d){context = d.Context; return d.Context;});
+
+<!-- context_boxes = svg.selectAll('svg') -->
+<!-- .data(function(d){return d.Context}) -->
+<!-- .enter().append('svg') -->
+<!-- .attr('height',250).attr('width',2000) -->
+<!-- .append('g') -->
+<!-- .attr('transform', function(d,i){return 'translate(0,' + 175*i + ')'}) -->
+
+<!-- mutation label -->
+svg.selectAll('svg')
+.data(function(d){return d.muttypes;})
+.enter()
+.append('text')
+.attr('x', 25)
+.attr('y', function(d,i){return 45+i*25;})
+.attr('height',20)
+.style("font-size","0.6em")
+.text(function(d){return d.m});
+
+<!-- tissue label -->
+<!-- svg.selectAll('svg') -->
+<!-- .data(function(d){return d.tissueNames;}) -->
+<!-- .enter() -->
+<!-- .append('text') -->
+<!-- .attr('x', function(d,i){return 25+i*250;}) -->
+<!-- .attr('y', 10) -->
+<!-- .attr('height',20) -->
+<!-- .style("font-size","0.6em") -->
+<!-- .text(function(d){return d.t}); -->
+
+//x axis bottom
+svg1.selectAll('g.y.axis')
+.data(function(d){return d.tissueNames})
+.enter().append('g')
+.attr('class', 'y axis')
+.attr('transform', function(d,i){val=230*i+75; console.log(val); return 'translate(' + val + ',350)'})
+.style("font-size","0.6em")
+.call(yAxis);
+
+//x axis middle
+//this writes twice
+svg.selectAll('g.y.axis')
+.data(function(d){console.log(this.parentNode.parentNode.parentNode.__data__); return this.parentNode.parentNode.parentNode.__data__.tissueNames})
+.enter().append('g')
+.attr('class', 'y axis 2')
+.attr('transform', function(d,i){val=230*i+75; console.log('here'); return 'translate(' + val + ',175)'})
+.style("font-size","0.6em")
+.call(yAxis2);
+
+svgs=svg.selectAll('svg')
+.data(function(d){return d.tissues;})
+.enter()
+.append('svg')
+.append('g')
+.attr('transform', function(d,i){return 'translate(' + (230*i) + ',20)'})
+
+<!-- .attr('transform', function(d,i){return 'translate(' + i*0 + ',0)';}) -->
+
+<!-- .style("font-size","0.6em") -->
+<!-- .attr('text-anchor','middle') -->
+
+<!-- svgs.append('text') -->
+<!-- .attr('transform','translate(0,175)') -->
+<!-- .text(function(d){return d.tissue}) -->
+
+chart=svgs.append('svg')
+.selectAll('g')
+.data(function(d){return d.muts;})
+.enter()
+.append('g').style("font-size","0.6em");
+
+	chart.append('rect')
+	.attr('x', 75)
+	.attr('y', function(d,i){return 10+i*25;})
+	.attr('width', function(d,i){return sx(d.Count);})
+	.attr('height', 20)
+	.attr('opacity',.3)
+	.attr('fill', 'steelblue');
+
+//axis on outside
+<!-- chart.append('svg') -->
+<!-- <\!-- .attr('class','yaxis') -\-> -->
+<!-- <\!-- .attr('width',200) -\-> -->
+<!-- <\!-- .attr('height',200) -\-> -->
+<!-- .append('g') -->
+<!-- .attr('transform', function(d,i){return 'translate(75,155)'}) -->
+<!-- .call(yAxis); -->
+
+<!-- console.log(chart[0].parentNode.parentNode.parentNode.parentNode.__data__.Context) -->
+<!-- if (chart[0].parentNode.parentNode.parentNode.parentNode.__data__.Context == 'Dipyrimidine') -->
+<!-- { -->
+<!-- chart.append('svg') -->
+<!-- <\!-- .attr('class','yaxis') -\-> -->
+<!-- <\!-- .attr('width',200) -\-> -->
+<!-- <\!-- .attr('height',200) -\-> -->
+<!-- .append('g') -->
+<!-- .attr('transform', function(d,i){return 'translate(75,155)'}) -->
+<!-- .call(function(d){console.log(); call(yAxis)) -->
+<!-- } -->
+<!-- else -->
+<!-- { -->
+<!-- chart.append('svg') -->
+<!-- <\!-- .attr('class','yaxis') -\-> -->
+<!-- <\!-- .attr('width',200) -\-> -->
+<!-- <\!-- .attr('height',200) -\-> -->
+<!-- .append('g') -->
+<!-- .attr('transform', function(d,i){return 'translate(75,155)'}) -->
+<!-- .call(yAxis2) -->
+<!-- } -->
+<!-- .call(function(d){if (context == 'Dipyrimidine') {return yAxis2} else {return yAxis}}); -->
+
+chart.append('svg')
+.append('g')
+.attr('transform', function(d,i){return 'translate(75,20)rotate(90)'})
+.call(xAxis);
+
+
+	<!-- chart.append('text') -->
+	<!-- .attr('x', 20) -->
+	<!-- .attr('height',20) -->
+	<!-- .attr('y', function(d,i){return 26+i*24;}) -->
+        <!-- .attr('text-anchor','middle') -->
+	<!-- .text(function(d){return d.MutType;}) -->
+});
+
+</script>
+</div>
+</body>
+</html>

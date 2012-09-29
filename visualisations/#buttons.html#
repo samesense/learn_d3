@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="d3.js"></script>
+    <script>
+    var draw_color;
+    function draw(data) {
+        "use strict";
+        d3.select("body")
+          .append("ul")
+          .selectAll("li")
+          .data(data)
+          .enter()
+          .append("li")
+            .text(function (d) {
+                return d.name + ": " + d.status;
+            });
+        
+        d3.selectAll("li")
+            .style("font-weight", function(d){
+                if (d.status == "GOOD SERVICE"){
+                    return "normal"
+                } else {
+                    return "bold"
+                }
+            })
+            .style('color', draw_color);
+
+     d3.select("#tupelo").on("click", function() {
+     d3.select("#orange").classed("active", false);
+     d3.select("#fort wayne").classed("active", false);
+     d3.select("#auburn").classed("active", false);
+     d3.select("#tupelo").classed("active", true);
+     });
+
+     d3.select("#orange").on("click", function() {
+     d3.select("#orange").classed("active", true);
+     d3.select("#tupelo").classed("active", false);
+     d3.select("#fort wayne").classed("active", false);
+     d3.select("#auburn").classed("active", false);
+     });
+
+$('input[name="type"]').change(function() {
+draw_color = $(this).val();
+d3.json('data/service_status.json', draw);
+})
+
+    }
+
+    </script>
+</head>
+<body>
+
+<!-- <div class='gallery' id='chart'> -->
+<!--   <button class='first' id='tupelo' value='purple'> -->
+<!--     Tupelo -->
+<!--   </button> -->
+<!--   <button id='fort wayne' value='orange'> -->
+<!--     Fort Wayne -->
+<!--   </button> -->
+<!--   <button id='orange' value='green'> -->
+<!--     Orange -->
+<!--   </button> -->
+<!-- <button class='last active' id='auburn' value='blue'> -->
+<!--     Auburn -->
+<!--   </button><p /> -->
+<!-- </div> -->
+
+<div class="controls">
+
+  <fieldset id="type">
+    <input type="radio" id="type_all" name="type" value="green" checked="checked"/><label for="type_all" class="sel"><span class="all">All Traffic</span></label>
+    <input type="radio" id="type_pc" name="type" value="blue"/><label for="type_pc"><span class="pc">Computer</span></label>
+    <input type="radio" id="type_mob" name="type" value="red"/><label for="type_mob"><span class="mob">Mobile</span></label>
+    </fieldset>
+
+  </div>
+
+<link href='button.css' rel='stylesheet' type='text/css' />
+<script src="jquery-1.8.2.min.js"></script>
+
+<script>
+// cities click
+d3.json('data/service_status.json', draw);
+    </script>
+</body>
+</html>

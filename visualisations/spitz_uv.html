@@ -202,6 +202,19 @@ chart.append('svg')
 .attr('transform', function(d,i){return 'translate(75,20)rotate(90)'})
 .call(xAxis);
 
+d3.select('svg')
+.append('text')
+.text('% of Total Context Mutations')
+.attr('x',275)
+.attr('y',450)
+
+d3.select('svg')
+.append('text')
+.text('Mutation')
+.attr('transform',"rotate (-90,40,250)")
+.attr('x',40)
+.attr('y',250)
+
 
 	<!-- chart.append('text') -->
 	<!-- .attr('x', 20) -->

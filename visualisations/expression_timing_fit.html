@@ -84,7 +84,7 @@
         )
 
         var freq_scale = d3.scale.linear()
-                           .domain([-.001,.01])
+                           .domain([8,20])
                            .range([height, margin])
         
         var expression_scale = d3.scale.linear()
@@ -273,7 +273,8 @@ console.log(d.extreme_gene);
 </head>
 <body>
     <script>
-        d3.json('data/rnaseq_mutFreq.Sep18.primary_cut.json', draw);
+      //d3.json('data/rnaseq_mutFreq.Sep18.primary_cut.json', draw);
+	d3.json('data/rnaseq_mutFreq.Sep20.metastasis_control.json', draw);
     </script>
 </body>
 </html>

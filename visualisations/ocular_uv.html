@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+<script type="text/javascript" src="d3.js">
+        <link type="text/css" rel="stylesheet" href="style.css">
+	    <link type="text/css" rel="stylesheet" href="prettify.css">
+	    <script type="text/javascript" src="prettify.js"></script>
+	    <link type="text/css" rel="stylesheet" href="style.css">
+	    <title></title>
+    </head>
+    <body>
+      <div id='body'>
+	<div id ='bars' style='width:2000px'></div>
+	<div id ='list'></div>
+	
+      <script type="text/javascript">
+
+d3.json('data/ocular_uv_data.json',
+function(data){
+
+var margin = 50;
+
+var sx = d3.scale.linear().domain([0,100]).range([0,200]);
+var sy = d3.scale.linear().domain([0,5]).range([125,0]);
+var xAxis = d3.svg.axis().scale(sy).ticks(5).tickFormat('');<!-- tickValues([0,5]); -->
+
+var yAxis = d3.svg.axis().scale(sx).tickValues([0,25,50,75,100]);
+var yAxis2 = d3.svg.axis().scale(sx).tickValues([0,25,50,75,100]).tickFormat('');
+
+svg1=d3.select('#bars')
+.selectAll('svg')
+.data(data)
+.enter()
+.append('svg').append('g')
+
+<!-- <\!-- tissue label -\-> -->
+svg1.selectAll('svg')
+.data(function(d){return d.tissueNames})
+.enter().append('text')
+.attr('x', function(d,i){if(i==0){val=150+i*230} else if(i==1){val=125+i*230} else{val=150+i*230}; return val})
+.attr('y', 20)
+.attr('height',20)
+.style("font-size","0.7em")
+.text(function(d){return d.t});
+
+svg = svg1.selectAll('svg')
+.data(function(d){return d.data})
+.enter().append('svg').attr('height',500).attr('width',2000)
+.append('g')
+.attr('transform', function(d,i){return 'translate(0,' + 175*i + ')'})
+
+<!-- context label -->
+svg.append('text')
+.attr('transform','translate(550,40)rotate(45)')
+.style("font-size","0.9em")	
+<!-- .attr('transform','translate(700,70)') -->
+.text(function(d){context = d.Context; return d.Context;});
+
+<!-- mutation label -->
+svg.selectAll('svg')
+.data(function(d){return d.muttypes;})
+.enter()
+.append('text')
+.attr('x', margin+25)
+.attr('y', function(d,i){return 45+i*25;})
+.attr('height',20)
+.style("font-size","0.6em")
+.text(function(d){return d.m});
+
+//x axis bottom
+svg1.selectAll('g.y.axis')
+.data(function(d){return d.tissueNames})
+.enter().append('g')
+.attr('class', 'y axis')
+.attr('transform', function(d,i){val=230*i+75+margin; console.log(val); return 'translate(' + val + ',350)'})
+.style("font-size","0.6em")
+.call(yAxis);
+
+//x axis middle
+//this writes twice
+svg.selectAll('g.y.axis')
+.data(function(d){console.log(this.parentNode.parentNode.parentNode.__data__); return this.parentNode.parentNode.parentNode.__data__.tissueNames})
+.enter().append('g')
+.attr('class', 'y axis 2')
+.attr('transform', function(d,i){val=230*i+75+margin; console.log('here'); return 'translate(' + val + ',175)'})
+.style("font-size","0.6em")
+.call(yAxis2);
+
+svgs=svg.selectAll('svg')
+.data(function(d){return d.tissues;})
+.enter()
+.append('svg')
+.append('g')
+.attr('transform', function(d,i){return 'translate(' + (margin+230*i) + ',20)'})
+
+chart=svgs.append('svg')
+.selectAll('g')
+.data(function(d){return d.muts;})
+.enter()
+.append('g').style("font-size","0.6em");
+
+	chart.append('rect')
+	.attr('x', 75)
+	.attr('y', function(d,i){return 10+i*25;})
+	.attr('width', function(d,i){return sx(d.Count);})
+	.attr('height', 20)
+	.attr('opacity',.3)
+	.attr('fill', 'steelblue');
+
+<!-- chart.append('text') -->
+<!-- .attr('x',75) -->
+<!-- .attr('y', function(d,i){return 10+i*25;}) -->
+<!-- .text(function(d,i){return d.Count;}) -->
+<!-- .attr('width',  -->
+<!-- 	.attr('height', 20) -->
+<!-- 	.attr('opacity',.3) -->
+<!-- 	.attr('fill', 'steelblue'); -->
+
+
+chart.append('svg')
+.append('g')
+.attr('transform', function(d,i){return 'translate(75,20)rotate(90)'})
+.call(xAxis);
+
+d3.select('svg')
+.append('text')
+.text('% of Total Mutations')
+.attr('x',100+margin)
+.attr('y',450)
+
+d3.select('svg')
+.append('text')
+.text('N = 661')
+.style("font-size","0.6em")
+.attr('x',200+margin)
+.attr('y',75)
+
+d3.select('svg')
+.append('text')
+.text('N = 63,177')
+.style("font-size","0.6em")
+.attr('x',400+margin)
+.attr('y',75)
+
+d3.select('svg')
+.append('text')
+.text('N = 281')
+.style("font-size","0.6em")
+.attr('x',200+margin)
+.attr('y',250)
+
+d3.select('svg')
+.append('text')
+.text('N = 4,353')
+.style("font-size","0.6em")
+.attr('x',400+margin)
+.attr('y',250)
+
+
+d3.select('svg')
+.append('text')
+.text('Mutation')
+.attr('transform',"rotate (-90,40,250)")
+.attr('x',40)
+.attr('y',250)
+
+});
+
+</script>
+</div>
+</body>
+</html>

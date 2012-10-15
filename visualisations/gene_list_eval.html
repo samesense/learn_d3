@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="d3.js"></script>
+<script type="text/javascript" src="d3.layout.js"></script>
+    <style>
+        div.chart{
+            font-family:sans-serif;
+            font-size:0.7em;
+        }
+        div.bar {
+            background-color:DarkRed;
+            color:white;
+            height:3em;
+            line-height:3em;
+            padding-right:1em;
+            margin-bottom:2px;
+            text-align:right;
+            margin-left:22em;
+        }
+        div.label {
+            height:3em;
+            line-height:3em;
+            padding-right:1em;
+            margin-bottom:2px;
+            float:left;
+            width:20em;
+            text-align:right;
+        }
+        
+    </style>
+
+    <script>
+    function draw(data) {
+        "use strict";
+        
+// expression start
+        console.log(data.expression)
+var    expression_height_wo_labels = 300,
+x_padding = 75;
+
+    var expression_scale = d3.scale.linear().domain([0,100]).range([expression_height_wo_labels,0]),
+        expression_yaxis = d3.svg.axis().scale(expression_scale).orient('left'),
+        expression_x_scale = d3.scale.linear().domain([0,data.expression.length]).range([x_padding,200+50*data.expression.length/4]),
+        expression_xaxis = d3.svg.axis().scale(expression_x_scale);    
+        
+        // a bar graph is made of all divs
+        // just as subway_train_status_board is ul and li elements
+        // the attr classes just assign properties to divs
+        var expression_chart = d3.select("#expression_div").append('svg')
+    .attr('width',700)
+    .attr('height',450);
+
+var expression_bars = expression_chart.selectAll('rect')
+          .data(data.expression)
+          .enter()
+          .append('rect')
+          .attr('y',function(d){return 10+expression_scale(d.percent)})
+          .attr('x',function(d,i){return expression_x_scale(i);})
+          .attr('color', 'DarkRed')
+          .attr('height', function(d){return expression_height_wo_labels - expression_scale(d.percent)})
+          // .attr('padding-right', '2em')
+          .attr("width", '20px');
+
+expression_chart.selectAll('text')
+.data(data.expression)
+.enter()
+.append('text')
+.text(function(d,i){return d.method;})
+
+
+
+.attr('y',320)
+    .attr('x',function(d,i){return expression_x_scale(i);})
+.style("font-size","2em")
+//.style('fill','red')
+.attr('transform', function(d,i){return "rotate (90," + expression_x_scale(i)  + ",320)";});
+<!-- xpression_chart.append('text') -->
+<!-- .text('N = 1989') -->
+<!-- .style("font-size","2em") -->
+<!-- .attr('x',50) -->
+<!-- .attr('y',50) -->
+
+
+<!-- d3.select('#expression_div') -->
+<!-- .append('text') -->
+<!-- .text('N = 1989') -->
+<!-- .style("font-size","2em") -->
+<!-- .attr('x',50) -->
+<!-- .attr('y',50) -->
+
+expression_chart.append('svg:g')
+.attr('transform', 'translate(60,10)')
+.call(expression_yaxis);
+
+expression_chart.append('text')
+.text('Percent of genes expressed')
+.attr('y',50)
+.attr('x',10)
+.attr('transform', 'rotate(90,10,50)');
+
+// expression end
+
+            <!-- .selectAll("div.bar") -->
+            <!-- .data(data.cash) -->
+            <!-- .enter() -->
+            <!-- .append("div") -->
+            <!-- .attr("class","line") -->
+    
+        <!-- d3.selectAll("div.line") -->
+        <!--     .append("div") -->
+        <!--     .attr("class","label") -->
+        <!--     .text(function(d){return d.name}) -->
+        
+        <!-- d3.selectAll("div.line") -->
+        <!--     .append("div") -->
+        <!--     .attr("class","bar") -->
+        <!--     .style("width", function(d){return d.count/100 + "px"}) -->
+        <!--     .text(function(d){return Math.round(d.count)}); -->
+
+// conservation start
+// draw one for each method
+
+var w = 400,
+    h = 400;
+
+var histogram = d3.layout.histogram()
+    (data.conservation);
+
+var x = d3.scale.ordinal()
+    .domain(histogram.map(function(d) { return d.x; }))
+    .rangeRoundBands([20, w]);
+
+var y = d3.scale.linear()
+    .domain([0, d3.max(histogram, function(d) { return d.y; })])
+    .range([10, h]);
+var ydisplay = d3.scale.linear()
+    .domain([0, d3.max(histogram, function(d) { return d.y; })])
+    .range([h, 10]);
+var conservation_xaxis = d3.svg.axis().scale(x).tickFormat(d3.format(".2f"));
+var conservation_yaxis = d3.svg.axis().scale(ydisplay).orient('left');
+
+var vis = d3.select("#conservation_div").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h+40)
+  .append("svg:g")
+    .attr("transform", "translate(.5)");
+
+vis.selectAll("rect")
+    .data(histogram)
+  .enter().append("svg:rect")
+    .attr("transform", function(d) { return "translate(" + x(d.x) + "," + (h - y(d.y)) + ")"; })
+    .attr("width", x.rangeBand())
+    .attr("y", function(d) { return y(d.y); })
+    .attr("height", 0)
+  .transition()
+    .duration(750)
+    .attr("y", 0)
+    .attr("height", function(d) { return y(d.y); });
+
+vis.append("svg:line")
+    .attr("x1", 0)
+    .attr("x2", w)
+    .attr("y1", h)
+    .attr("y2", h);
+
+vis.append('svg:g')
+.attr('transform', 'translate(0,410)')
+.call(conservation_xaxis);
+
+vis.append('svg:g')
+.attr('transform', 'translate(20,0)')
+.call(conservation_yaxis);
+
+// conservation end
+    
+    }
+    </script>
+</head>
+<body>
+<div id='expression_div' style='width:700px;height:450px'/>
+<div id='conservation_div' style='width:700px;height:700px'/>
+    <script>
+        d3.json('data/test_expression.json', draw);
+    </script>
+</body>
+</html>
